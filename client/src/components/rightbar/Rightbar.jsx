@@ -6,14 +6,40 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Add, Remove } from "@material-ui/icons";
+// import { all } from "../../../../api/routes/users";
 
 export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
+  const [allusers, setAllusers] = useState([]);
+
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  const [followed, setFollowed] = useState(
-    currentUser.followings.includes(user?.id)
-  );
+  // const [followed, setFollowed] = useState(
+  //   currentUser.followings.includes(user?.id)
+  // );
+    // console.log(user)
+    // console.log(currentUser)
+
+    // changed
+    useEffect(()=>{
+      const fetchAllUsers = async()=>{
+        const res = await axios.get("/users/allusers/allusers")
+        setAllusers(res.data);
+      };
+      fetchAllUsers();
+    },[])
+
+
+
+    const isGetFollowed = async()=>{
+      //  if(user._id){  // changed
+      // if(!user._id)return false;
+      return await currentUser.followings.includes(user?._id)
+      //  }   
+      // else return false; //changed
+    }
+   const [followed, setFollowed] = useState(isGetFollowed);
+
 
   useEffect(() => {
     const getFriends = async () => {
@@ -26,6 +52,7 @@ export default function Rightbar({ user }) {
     };
     getFriends();
   }, [user]);
+  // console.log(friends);
 
   const handleClick = async () => {
     try {
@@ -57,8 +84,8 @@ export default function Rightbar({ user }) {
         <img className="rightbarAd" src="assets/ad.png" alt="" />
         <h4 className="rightbarTitle">Online Friends</h4>
         <ul className="rightbarFriendList">
-          {Users.map((u) => (
-            <Online key={u.id} user={u} />
+          {allusers.map((u) => (
+            <Online key={u._id} user={u} />
           ))}
         </ul>
       </>
@@ -70,7 +97,7 @@ export default function Rightbar({ user }) {
       <>
         {user.username !== currentUser.username && (
           <button className="rightbarFollowButton" onClick={handleClick}>
-            {followed ? "Unfollow" : "Follow"}
+            {followed ? "unfollow" : "follow"}
             {followed ? <Remove /> : <Add />}
           </button>
         )}

@@ -33,7 +33,8 @@ export default function Post({ post }) {
     setIsLiked(!isLiked);
   };
   return (
-    <div className="post">
+    post && 
+    (<div className="post">
       <div className="postWrapper">
         <div className="postTop">
           <div className="postTopLeft">
@@ -80,6 +81,6 @@ export default function Post({ post }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>)
   );
 }
